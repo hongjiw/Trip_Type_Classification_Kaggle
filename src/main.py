@@ -1,6 +1,6 @@
 import os
-from init import *
-from io import *
+from myInit import *
+from myIO import *
 from feature import *
 
 if __name__ == '__main__':
