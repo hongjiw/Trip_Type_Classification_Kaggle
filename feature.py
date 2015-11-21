@@ -60,20 +60,20 @@ def extract_feature(x):
     feature = {}
     
     for num in dateFeature.keys():
-        tmp = numpy.zeros((1, len(dateDict)), dtype = float)
-        tmp[0][dateFeature[num]] = 1
+        tmp = numpy.zeros(len(dateDict), dtype = float)
+        tmp[dateFeature[num]] = 1
         tmpfeature = tmp
         
-        tmp = numpy.zeros((1, len(dptDict)), dtype = float)
+        tmp = numpy.zeros(len(dptDict), dtype = float)
         for key in dptFeature[num].keys():
-            tmp[0][key] = dptFeature[num][key]
-        tmp = normalize(tmp)
+            tmp[key] = dptFeature[num][key]
+        tmp = normalize(tmp.reshape(1, len(dptDict))).reshape(len(dptDict))
         tmpfeature = numpy.hstack((tmpfeature, tmp))
         
-        tmp = numpy.zeros((1, len(categoryDict)), dtype = float)
+        tmp = numpy.zeros(len(categoryDict), dtype = float)
         for key in categoryFeature[num].keys():
-            tmp[0][key] = categoryFeature[num][key]
-        tmp = normalize(tmp)
+            tmp[key] = categoryFeature[num][key]
+        tmp = normalize(tmp.reshape(1, len(categoryDict))).reshape(len(categoryDict))
         tmpfeature = numpy.hstack((tmpfeature, tmp))
         feature[num] = tmpfeature
     return feature
@@ -92,21 +92,19 @@ def convert_label_digit(y):
 def convert_label_vector(y, yDict):
     labelVector = {}
     for num in y.keys():
-        labelVector[num] = numpy.zeros((1, len(yDict)))
-        labelVector[num][0][y[num]] = 1
+        labelVector[num] = numpy.zeros(len(yDict))
+        labelVector[num][y[num]] = 1
     return labelVector
         
     
 def concate_data(x, y):
-    data = None
-    label = None
+    data = numpy.zeros((len(x), x.values()[0].shape[0]))
+    label = numpy.zeros((len(y), y.values()[0].shape[0]))
+    i = 0
     for num in x.keys():
-        if data == None:
-            data = x[num]
-            label = y[num]
-        else:
-            data = numpy.vstack((data, x[num]))
-            label = numpy.vstack((label, y[num]))
+        data[i] = x[num]
+        label[i] = y[num]
+        i = i + 1
     return data, label
 
 
