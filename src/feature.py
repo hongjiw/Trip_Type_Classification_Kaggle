@@ -2,9 +2,9 @@ import os
 import numpy
 from sklearn.preprocessing import normalize
 
-def extract_date(x):
+def extract_date(x, _dict):
     dateFeature = {}
-    dateDict = {}
+    dateDict = _dict
     dateCount = 0
     
     for key in x.keys():
@@ -15,9 +15,9 @@ def extract_date(x):
         dateFeature[key] = dateDict[tmp]
     return dateFeature, dateDict
 
-def extract_department(x):
+def extract_department(x, _dict):
     dptFeature = {}
-    dptDict = {}
+    dptDict = _dict
     dptCount = 0
     
     for key in x.keys():
@@ -34,9 +34,9 @@ def extract_department(x):
                 dptFeature[key][dptTmpCount] = dptFeature[key][dptTmpCount] + 1
     return dptFeature, dptDict
     
-def extract_category(x):
+def extract_category(x, _dict):
     categoryFeature = {}
-    categoryDict = {}
+    categoryDict = _dict
     categoryCount = 0
     
     for key in x.keys():
@@ -53,10 +53,10 @@ def extract_category(x):
                 categoryFeature[key][categoryTmpCount] = categoryFeature[key][categoryTmpCount] + 1
     return categoryFeature, categoryDict
 
-def extract_feature(x):
-    dateFeature, dateDict = extract_date(x)
-    dptFeature, dptDict = extract_department(x)
-    categoryFeature, categoryDict = extract_category(x)
+def extract_feature(x, dictlist):
+    dateFeature, dateDict = extract_date(x, dictlist[0])
+    dptFeature, dptDict = extract_department(x, dictlist[1])
+    categoryFeature, categoryDict = extract_category(x, dictlist[2])
     feature = {}
     
     for num in dateFeature.keys():
@@ -76,7 +76,7 @@ def extract_feature(x):
         tmp = normalize(tmp.reshape(1, len(categoryDict))).reshape(len(categoryDict))
         tmpfeature = numpy.hstack((tmpfeature, tmp))
         feature[num] = tmpfeature
-    return feature
+    return feature, [dateDict, dptDict, categoryDict]
     
 def convert_label_digit(y):
     labelDict = {}
@@ -96,8 +96,17 @@ def convert_label_vector(y, yDict):
         labelVector[num][y[num]] = 1
     return labelVector
         
+def concate_digit(x, y):
+    data = numpy.zeros((len(x), x.values()[0].shape[0]))
+    label = numpy.zeros(len(y))
+    i = 0
+    for num in x.keys():
+        data[i] = x[num]
+        label[i] = y[num]
+        i = i + 1
+    return data, label
     
-def concate_data(x, y):
+def concate_vector(x, y):
     data = numpy.zeros((len(x), x.values()[0].shape[0]))
     label = numpy.zeros((len(y), y.values()[0].shape[0]))
     i = 0
@@ -107,6 +116,17 @@ def concate_data(x, y):
         i = i + 1
     return data, label
 
+def concate_data(x, y_digit, y_vec):
+    data = numpy.zeros((len(x), x.values()[0].shape[0]))
+    label_digit = numpy.zeros(len(y_digit))
+    label_vec = numpy.zeros((len(y_vec), y_vec.values()[0].shape[0]))
+    i = 0
+    for num in x.keys():
+        data[i] = x[num]
+        label_digit[i] = y_digit[num]
+        label_vec[i] = y_vec[num]
+        i = i + 1
+    return data, label_digit, label_vec
 
 
 

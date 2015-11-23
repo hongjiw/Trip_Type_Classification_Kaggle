@@ -3,8 +3,16 @@ import sys
 import csv
 from myInit import *
 
-def write_csv(results, label_set):
-    print 'TODO'
+def write_csv(number, results, labelDict):
+    with open('../data/result.csv', 'wb') as f:
+        writer = csv.writer(f)
+        for num, prob in zip(number, results):
+            row = [int(num)]
+            for i in range(3, 45):
+                if labelDict.has_key(str(i)):
+                    row.append(prob[labelDict[str(i)]])
+            row.append(prob[labelDict[str(999)]])
+            writer.writerow(row)
 
 def read_csv(file_path):
     X = {}
