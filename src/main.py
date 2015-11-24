@@ -10,23 +10,35 @@ if __name__ == '__main__':
     ##data
     X_train, Y_train = read_csv(train_file_path)
     X_test, _ = read_csv(test_file_path)
+    
+    train_num = len(X_train)
+    
+    X_all = X_train.values()
+    X_all.extend(X_test.values())
+    
 
     print 'Read {} training samples'.format(len(X_train))
     print 'Read {} testing samples'.format(len(X_test))
 
     ##feature
-    feature, trainDicts = extract_feature(X_train, [{}, {}, {}])
-    labelDigit, labelDict = convert_label_digit(Y_train)
+    feature, featureDicts = extract_feature(X_all, [{}, {}, {}])
+    feature_train = feature[0:train_num]
+    feature_test = feature[train_num:]
+    
+    print 'Extracted {} training samples'.format(len(feature_train))
+    print 'Extracted {} testing samples'.format(len(feature_test))
+    
+    labelDigit, labelDict = convert_label_digit(Y_train.values())
     labelVec = convert_label_vector(labelDigit, labelDict)
-    X, y_digit, y_vector = concate_data(feature, labelDigit, labelVec)
+    # X, y_digit, y_vector = concate_data(feature, labelDigit, labelVec)
     
     clf = get_clf()
-    # score = k_fold_validate(clf, X, y_digit, y_vector, 5)
+    score = k_fold_validate(clf, feature_train, labelDigit, labelVec, 5)
     
-    feature_test, testDicts = extract_feature(X_test, trainDicts)
-    clf.fit(X, y_digit)
-    prob_test = clf.predict_proba(feature_test.values())
-    write_csv(feature_test.keys(), prob_test, labelDict)
+    # feature_test, testDicts = extract_feature(X_test, trainDicts)
+    #clf.fit(X, y_digit)
+    #prob_test = clf.predict_proba(feature_test.values())
+    #write_csv(feature_test.keys(), prob_test, labelDict)
 
     #split train and val
     # cutoff = int(len(feature) *  (train_val_ratio - 1) / train_val_ratio)
