@@ -14,7 +14,10 @@ def extract_date(x, _dict):
             dateDict[tmp] = dateCount
             dateCount = dateCount + 1
         dateFeature[i] = dateDict[tmp]
-    return dateFeature, dateDict
+    feature = numpy.zeros((len(x), len(dateDict)), dtype = float)
+    for i in range(len(x)):
+        feature[i][dateFeature[i]] = 1
+    return feature, dateDict
 
 def extract_department(x, _dict):
     dptFeature = []
@@ -33,8 +36,12 @@ def extract_department(x, _dict):
                 dptFeature[i][dptTmpCount] = 1
             else:
                 dptFeature[i][dptTmpCount] = dptFeature[i][dptTmpCount] + 1
+    feature = numpy.zeros((len(x), len(dptDict)), dtype = float)
+    for i in range(len(x)):
+        for key in dptFeature[i].keys():
+            feature[i][key] = dptFeature[i][key]
     
-    return dptFeature, dptDict
+    return feature, dptDict
     
 def extract_category(x, _dict):
     categoryFeature = []
@@ -53,7 +60,11 @@ def extract_category(x, _dict):
                 categoryFeature[i][categoryTmpCount] = 1
             else:
                 categoryFeature[i][categoryTmpCount] = categoryFeature[i][categoryTmpCount] + 1
-    return categoryFeature, categoryDict
+    feature = numpy.zeros((len(x), len(categoryDict)), dtype = float)
+    for i in range(len(x)):
+        for key in categoryFeature[i].keys():
+            feature[i][key] = categoryFeature[i][key]
+    return feature, categoryDict
 
 def extract_department_item_num(x, _dict):
     dptFeature = []
@@ -69,33 +80,22 @@ def extract_department_item_num(x, _dict):
                 dptFeature[i][dptTmpCount] = dptItemNum
             else:
                 dptFeature[i][dptTmpCount] = dptFeature[i][dptTmpCount] + dptItemNum
+    feature = numpy.zeros((len(x), len(dptDict)), dtype = float)
+    for i in range(len(x)):
+        for key in dptFeature[i].keys():
+            feature[i][key] = dptFeature[i][key]
     return dptFeature
     
 def extract_feature(x, dictlist):
     dateFeature, dateDict = extract_date(x, dictlist[0])
+    
     dptFeature, dptDict = extract_department(x, dictlist[1])
-    categoryFeature, categoryDict = extract_category(x, dictlist[2])
-    feature = numpy.zeros((len(x), len(dateDict) + len(dptDict)), dtype = float)
     
-    for i in range(len(x)):
-        tmp = numpy.zeros(len(dateDict), dtype = float)
-        tmp[dateFeature[i]] = 1
-        tmpfeature = tmp
-        
-        tmp = numpy.zeros(len(dptDict), dtype = float)
-        for key in dptFeature[i].keys():
-            tmp[key] = dptFeature[i][key]
-        tmpfeature = numpy.hstack((tmpfeature, tmp))
-        
-        # tmp = numpy.zeros(len(categoryDict), dtype = float)
-        # for key in categoryFeature[i].keys():
-            # tmp[key] = categoryFeature[i][key]
-        # tmpfeature = numpy.hstack((tmpfeature, tmp))
-        
-        feature[i] = tmpfeature
+    # categoryFeature, categoryDict = extract_category(x, dictlist[2])
     
-    feature = scale(feature)
-    return feature, [dateDict, dptDict, categoryDict]
+    feature = numpy.hstack((dateFeature, dptFeature))
+    
+    return feature, [dateDict, dptDict]
     
 def convert_label_digit(y):
     labelDict = {}
