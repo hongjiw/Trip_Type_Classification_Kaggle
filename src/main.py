@@ -33,12 +33,12 @@ if __name__ == '__main__':
     # X, y_digit, y_vector = concate_data(feature, labelDigit, labelVec)
     
     clf = get_clf()
-    score = k_fold_validate(clf, feature_train, labelDigit, labelVec, 5)
+    # score = k_fold_validate(clf, feature_train, labelDigit, labelVec, 5)
     
     # feature_test, testDicts = extract_feature(X_test, trainDicts)
-    #clf.fit(X, y_digit)
-    #prob_test = clf.predict_proba(feature_test.values())
-    #write_csv(feature_test.keys(), prob_test, labelDict)
+    clf.fit(feature_train, labelDigit)
+    prob_test = clf.predict_proba(feature_test)
+    write_csv(X_test.keys(), prob_test, labelDict)
 
     #split train and val
     # cutoff = int(len(feature) *  (train_val_ratio - 1) / train_val_ratio)

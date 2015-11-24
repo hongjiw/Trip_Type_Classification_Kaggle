@@ -4,7 +4,7 @@ from sklearn.preprocessing import normalize
 from sklearn.preprocessing import scale
 
 def extract_date(x, _dict):
-    dateFeature = numpy.zeros(len(x))
+    dateFeature = numpy.zeros(len(x), dtype = int)
     dateDict = _dict
     dateCount = 0
     
@@ -75,7 +75,7 @@ def extract_feature(x, dictlist):
     dateFeature, dateDict = extract_date(x, dictlist[0])
     dptFeature, dptDict = extract_department(x, dictlist[1])
     categoryFeature, categoryDict = extract_category(x, dictlist[2])
-    feature = numpy.zeros((len(x), len(dateDict) + len(dptDict) + len(categoryDict)), dtype = float)
+    feature = numpy.zeros((len(x), len(dateDict) + len(dptDict)), dtype = float)
     
     for i in range(len(x)):
         tmp = numpy.zeros(len(dateDict), dtype = float)
@@ -85,14 +85,13 @@ def extract_feature(x, dictlist):
         tmp = numpy.zeros(len(dptDict), dtype = float)
         for key in dptFeature[i].keys():
             tmp[key] = dptFeature[i][key]
-        # tmp = normalize(tmp.reshape(1, len(dptDict))).reshape(len(dptDict))
         tmpfeature = numpy.hstack((tmpfeature, tmp))
         
-        tmp = numpy.zeros(len(categoryDict), dtype = float)
-        for key in categoryFeature[i].keys():
-            tmp[key] = categoryFeature[i][key]
-        # tmp = normalize(tmp.reshape(1, len(categoryDict))).reshape(len(categoryDict))
-        tmpfeature = numpy.hstack((tmpfeature, tmp))
+        # tmp = numpy.zeros(len(categoryDict), dtype = float)
+        # for key in categoryFeature[i].keys():
+            # tmp[key] = categoryFeature[i][key]
+        # tmpfeature = numpy.hstack((tmpfeature, tmp))
+        
         feature[i] = tmpfeature
     
     feature = scale(feature)
@@ -102,7 +101,7 @@ def convert_label_digit(y):
     labelDict = {}
     labelCount = 0
     labelDigit = numpy.zeros(len(y), dtype = int)
-    for i in len(y):
+    for i in range(len(y)):
         if not labelDict.has_key(y[i]):
             labelDict[y[i]] = labelCount
             labelCount = labelCount + 1
@@ -111,7 +110,7 @@ def convert_label_digit(y):
 
 def convert_label_vector(y, yDict):
     labelVector = numpy.zeros((len(y), len(yDict)), dtype = int)
-    for i in len(y):
+    for i in range(len(y)):
         labelVector[i][y[i]] = 1
     return labelVector
         
