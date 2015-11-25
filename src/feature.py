@@ -4,22 +4,33 @@ from sklearn.preprocessing import normalize
 from sklearn.preprocessing import scale
 
 def extract_date(x, _dict):
+    '''
+    x: [
+        [
+         ["TripType","VisitNumber","Weekday","Upc","ScanCount","DepartmentDescription","FinelineNumber"]
+         ...
+        ] 
+       ]
+    '''
     dateFeature = numpy.zeros(len(x), dtype = int)
     dateDict = _dict
     dateCount = 0
     
     for i in range(len(x)):
-        tmp = x[i][0][0]
+        tmp = x[i][0][0] #only use the first record
         if not dateDict.has_key(tmp):
             dateDict[tmp] = dateCount
             dateCount = dateCount + 1
         dateFeature[i] = dateDict[tmp]
     feature = numpy.zeros((len(x), len(dateDict)), dtype = float)
+    
     for i in range(len(x)):
         feature[i][dateFeature[i]] = 1
     return feature, dateDict
 
 def extract_department(x, _dict):
+    '''
+    '''
     dptFeature = []
     dptDict = _dict
     dptCount = 0
