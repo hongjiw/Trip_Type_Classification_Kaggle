@@ -3,6 +3,22 @@ import numpy
 from sklearn.preprocessing import normalize
 from sklearn.preprocessing import scale
 
+def classify_by_label(labelDigit):
+    sampleSet = {}
+    for i in range(len(labelDigit)):
+        if not sampleSet.has_key(labelDigit[i]):
+            sampleSet[labelDigit[i]] = []
+        sampleSet[labelDigit[i]].append(i)
+    return sampleSet
+
+def correlation(x, sampleSet)
+    entropy = 0.0
+    sumFreq = x.sum()
+    for subset in sampleSet.values():
+        p = float(x[subset].sum()) / sumFreq
+        entropy = entropy - p * numpy.log(p)
+    return entropy
+
 def extract_date(x, _dict):
     '''
     x: [
