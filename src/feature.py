@@ -11,7 +11,7 @@ def classify_by_label(labelDigit):
         sampleSet[labelDigit[i]].append(i)
     return sampleSet
 
-def correlation(x, sampleSet)
+def correlation(x, sampleSet):
     entropy = 0.0
     sumFreq = x.sum()
     for subset in sampleSet.values():
@@ -20,22 +20,33 @@ def correlation(x, sampleSet)
     return entropy
 
 def extract_date(x, _dict):
+    '''
+    x: [
+        [
+         ["TripType","VisitNumber","Weekday","Upc","ScanCount","DepartmentDescription","FinelineNumber"]
+         ...
+        ] 
+       ]
+    '''
     dateFeature = numpy.zeros(len(x), dtype = int)
     dateDict = _dict
     dateCount = 0
     
     for i in range(len(x)):
-        tmp = x[i][0][0]
+        tmp = x[i][0][0] #only use the first record
         if not dateDict.has_key(tmp):
             dateDict[tmp] = dateCount
             dateCount = dateCount + 1
         dateFeature[i] = dateDict[tmp]
     feature = numpy.zeros((len(x), len(dateDict)), dtype = float)
+    
     for i in range(len(x)):
         feature[i][dateFeature[i]] = 1
     return feature, dateDict
 
 def extract_department(x, _dict):
+    '''
+    '''
     dptFeature = []
     dptDict = _dict
     dptCount = 0
@@ -100,18 +111,21 @@ def extract_department_item_num(x, _dict):
     for i in range(len(x)):
         for key in dptFeature[i].keys():
             feature[i][key] = dptFeature[i][key]
-    return dptFeature
+    return feature
     
 def extract_feature(x, dictlist):
     dateFeature, dateDict = extract_date(x, dictlist[0])
     
     dptFeature, dptDict = extract_department(x, dictlist[1])
+    dptFeatureCount = extract_department_item_num(x, dptDict)
     
-    # categoryFeature, categoryDict = extract_category(x, dictlist[2])
+    categoryFeature, categoryDict = extract_category(x, dictlist[2])
     
     feature = numpy.hstack((dateFeature, dptFeature))
+    feature = numpy.hstack((feature, dptFeatureCount))
+    feature = numpy.hstack((feature, categoryFeature))
     
-    return feature, [dateDict, dptDict]
+    return feature, [dateDict, dptDict, categoryDict]
     
 def convert_label_digit(y):
     labelDict = {}
