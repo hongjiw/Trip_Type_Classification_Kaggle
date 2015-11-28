@@ -10,8 +10,8 @@ def write_csv(number, results, labelDict):
             row = [int(num)]
             for i in range(3, 45):
                 if labelDict.has_key(str(i)):
-                    row.append(prob[labelDict[str(i)]])
-            row.append(prob[labelDict[str(999)]])
+                    row.append("%.2f" % (prob[labelDict[str(i)]] + 1.0/len(labelDict)))
+            row.append("%.2f" % (prob[labelDict[str(999)]] + 1.0/len(labelDict)))
             writer.writerow(row)
 
 def read_csv(file_path):
